@@ -1,8 +1,74 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="pl" xml:lang="pl">
+<!DOCTYPE html>
+<html lang="pl">
 <head>
-<meta http-equiv="refresh" content="0; url=https://discord.gg/x4wSurYsEH">
+	<meta charset="utf-8">
+	<title>Oszukane płatności kartą, algorytm Luhna</title>
+	<link rel="stylesheet" href="css/arkusz.css">
 </head>
-<body style="background: #000000;">
+<body>
+	<div class="pojemnik">
+
+<script>
+
+	const karta = "5***********9038";
+	const karta_test = "7155032979402154";
+
+	function luhn(nr)
+	{
+		let waga = 1;
+		let wynik = "";
+		let iloczyn = 0;
+
+		for(let i = nr.length-1; i >= 0; i--)
+		{
+			if(waga == 1){
+				wynik += nr.charAt(i);
+				waga = 2;
+			} else {
+				iloczyn = parseInt(nr.charAt(i)) * 2;
+				if(iloczyn > 9)
+					iloczyn = Math.floor(iloczyn / 10) + iloczyn % 10;
+					//iloczyn -= 9;
+				wynik += iloczyn;
+				waga = 1;
+			}
+		}
+
+		let suma_kontrolna = 0;
+
+		for(let i = 0; i < wynik.length; i++)
+		{
+			suma_kontrolna += parseInt(wynik.charAt(i));
+		}
+
+		return suma_kontrolna;
+
+	}
+
+	function search_six(nr)
+	{
+		let guess = 0;
+		let check = "";
+		let result = "";
+
+		for(let i = 0; i <= 99999999999; i++)
+		{
+			guess = i.toString().padStart(11, "0");
+
+			check = nr.substr(0, 1) + guess + nr.substr(12);
+
+			if(check % 123457 == 0 && luhn(check) % 10 == 0)
+				result += check + "<br>";	
+		}
+
+		return result;
+	}
+
+	//document.querySelector(".pojemnik").innerHTML = luhn(karta_test);
+	document.querySelector(".pojemnik").innerHTML = search_six(karta);
+
+</script>
+
+	</div>
 </body>
 </html>
